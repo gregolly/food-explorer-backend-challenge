@@ -1,34 +1,17 @@
-const { hash, compare } = require('bcryptjs')
-const knex = require('../database/knex')
+const { compare } = require('bcryptjs')
 const AppError = require('../utils/AppError')
+const UserRepository = require('../repositories/UserRepository')
+const UserCreateService = require("../services/UserCreateService")
 
 class UsersController {
     async create(request, response) {
         const { name, email, password, isAdmin } = request.body
+
+        const userRepository = new UserRepository()
+        const userCreateService = new UserCreateService(userRepository)
+
+        await userCreateService.execute({ name, email, password, isAdmin })
         
-        const HasEmailExist = await knex('users').where({ email }).first()
-
-        if (!name || !email || !password) {
-            throw new AppError('Informe todos os campos!')
-        }
-
-        if (HasEmailExist) {
-            throw new AppError("Este e-mail ja esta em uso!")
-        }
-
-        if (password.length < 6) {
-            throw new AppError('A senha deve ter pelo menos 6 digitos!')
-        }
-
-        const hashedPassword = await hash(password, 8)
-        
-        await knex('users').insert({
-            name,
-            email,
-            password: hashedPassword,
-            isAdmin
-        })
-
         return response.status(201).json()
     }
 
