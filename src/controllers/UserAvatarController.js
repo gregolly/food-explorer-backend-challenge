@@ -5,8 +5,10 @@ const AppError = require("../utils/AppError")
 class UserAvatarController {
     async update(request, response) {
         const user_id = request.user.id
-        const avatarFilename = request.file.avatarFilename
+        const avatarFilename = request.file ? request.file.filename : null
         const diskStorage = new DiskStorage()
+
+        console.log(request.file.avatarFilename)
 
         const user = await knex('users').where({ id: user_id }).first()
 
@@ -18,13 +20,15 @@ class UserAvatarController {
             await diskStorage.deleteFile(user.avatar)
         }
 
-        const filename = await diskStorage.saveFile(avatarFilename)
+        const filename = avatarFilename ? await diskStorage.saveFile(avatarFilename) : "https://placehold.co/600x400"
+        user.avatar = filename
 
-        await knex('users').where({ id: user_id }).update({ avatar: filename })
+        await knex('users')
+        .where({ id: user_id })
+        .update({ avatar: filename })
 
-        const updatedUser = await knex('users').where({ id: user_id }).first()
+        return response.json(user)
 
-        return response.status(201).json(updatedUser)
     }
 }
 
