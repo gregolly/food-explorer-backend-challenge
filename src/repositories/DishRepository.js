@@ -32,7 +32,7 @@ class DishRepository {
         await knex('dishes').delete().where({ id })
     }
 
-    async findDish(search) {
+    async findDishByNameOrIngredients(search) {
         return await knex
             .select('d.*')
             .from('dishes as d')
