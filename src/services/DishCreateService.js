@@ -1,6 +1,6 @@
 const AppError = require('../utils/AppError')
 
-class DishesCreateService {
+class DishCreateService {
     constructor(dishesRepository) {
         this.dishesRepository = dishesRepository
     }
@@ -32,4 +32,4 @@ class DishesCreateService {
     }
 }
 
-module.exports = DishesCreateService
+module.exports = DishCreateService
