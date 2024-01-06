@@ -21,10 +21,10 @@ class DishRepository {
     }
 
     async update(dish) {
-        const update_at = knex.fn.now()
+        const updated_at = knex.fn.now()
 
         await knex('dishes')
-            .update({ ...dish, update_at })
+            .update({ ...dish, updated_at })
             .where({ id: dish.id })
     }
 
